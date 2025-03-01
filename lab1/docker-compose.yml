@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    image: mynginx
+    container_name: mad_anoke_nginx
+    ports:
+      - "6969:69"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./html:/usr/share/nginx/html:ro
