@@ -1,30 +1,17 @@
-# Используем легковесный образ Alpine
-FROM python:3.9-alpine
-
-# Устанавливаем зависимости
-RUN apk add --no-cache gcc musl-dev postgresql-dev
+# Используем легковесный образ Node.js на базе Alpine
+FROM node:18-alpine
 
 # Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Копируем зависимости
-COPY app/requirements.txt .
+# Копируем package.json и package-lock.json
+COPY ./express-postgres-starter/package*.json ./
 
-# Устанавливаем зависимости Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Устанавливаем только production-зависимости
+RUN npm install && npm cache clean --force
 
-# Копируем код приложения
-COPY app/ .
+# Копируем все файлы проекта
+COPY ./express-postgres-starter .
 
-# Очищаем кэш после установки зависимостей
-RUN rm -rf /var/cache/apk/*
-
-# Устанавливаем переменную окружения для Flask
-ENV FLASK_APP=__init__.py
-
-# Создаем непривилегированного пользователя
-RUN adduser -D myuser
-USER myuser
-
-# Запускаем приложение
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Запускаем миграции перед стартом приложения
+CMD ["sh", "-c", "node bin/migrate.js up && node bin/start.js"]
