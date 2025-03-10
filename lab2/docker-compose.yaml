@@ -2,9 +2,8 @@ services:
   app:
     build: ./express-postgres-starter
     container_name: express-postgres-app
-    environment:
-      - DATABASE_URL=postgres://express_user:express_password@postgres:5432/express
-      - PORT=3000
+    env_file:
+      - ./express-postgres-starter/.app.env
     volumes:
       - ./express-postgres-starter/node_modules:/usr/src/app/node_modules
     ports:
@@ -16,10 +15,8 @@ services:
   postgres:
     image: postgres:13-alpine
     container_name: postgres-db
-    environment:
-      POSTGRES_DB: express
-      POSTGRES_USER: express_user
-      POSTGRES_PASSWORD: express_password
+    env_file:
+      - ./express-postgres-starter/.db.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
