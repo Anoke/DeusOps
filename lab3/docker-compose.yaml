@@ -1,0 +1,27 @@
+services:
+  app:
+    build: ./express-postgres-starter
+    container_name: express-postgres-app
+    env_file:
+      - ./express-postgres-starter/.app.env
+    volumes:
+      - ./express-postgres-starter/node_modules:/usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    user: "node"
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres-db
+    env_file:
+      - ./express-postgres-starter/.db.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+    driver: local
