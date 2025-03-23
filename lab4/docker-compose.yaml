@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./runner.Dockerfile
+    container_name: express-postgres-app
+    env_file:
+      - ./.app.env
+    volumes:
+      - ./node_modules:/usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    user: "node"
+
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres-db
+    env_file:
+      - ./.db.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+    driver: local
